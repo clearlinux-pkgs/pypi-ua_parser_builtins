@@ -1,0 +1,38 @@
+From 38f35a7dedcc44421525c538e38af50249169053 Mon Sep 17 00:00:00 2001
+From: William Douglas <william.douglas@intel.com>
+Date: Fri, 14 Feb 2025 08:32:58 -0800
+Subject: [PATCH] Get version from json file
+
+Signed-off-by: William Douglas <william.douglas@intel.com>
+---
+ ua-parser-builtins/hatch_build.py | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
+
+diff --git a/ua-parser-builtins/hatch_build.py b/ua-parser-builtins/hatch_build.py
+index 1eac776..3d5b1c3 100644
+--- a/ua-parser-builtins/hatch_build.py
++++ b/ua-parser-builtins/hatch_build.py
+@@ -15,16 +15,10 @@ from versioningit import get_version
+ 
+ class MetadataHook(MetadataHookInterface):
+     def update(self, metadata: dict[str, Any]) -> None:
+-        v = get_version(
+-            os.path.join(self.root, "uap-core"),
+-            config={
+-                "format": {
+-                    "distance": "{next_version}.dev{distance}",
+-                }
+-            },
+-        )
+-        if v in ("0.15.0", "0.16.0", "0.18.0"):
+-            v = f"{v}.post1"
++        import json
++        with open(os.path.join(self.root, "uap-core", 'package.json')) as ufile:
++            ujson = json.load(ufile)
++            v = ujson['version']
+ 
+         metadata["version"] = v
+ 
+-- 
+2.48.1
+
